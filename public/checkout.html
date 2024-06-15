@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оформление заказа | Кондитерская Ваниль</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <script src="js/header.js"></script>
+    </header>
+
+    <main>
+        <div class="checkout-container">
+            <div class="order-summary">
+                <h2>Ваш заказ</h2>
+                <div class="product-list">
+                    <!-- Продукты будут добавлены динамически -->
+                </div>
+                <div class="item-total">
+                    <span>Итого</span>
+                    <span id="total-price">0 тг</span>
+                </div>
+            </div>
+            <div class="payment-info">
+                <h2>Информация для оплаты</h2>
+                <form id="checkout-form">
+                    <label for="name">Имя</label>
+                    <input type="text" id="name" required>
+                    <label for="address">Адрес</label>
+                    <input type="text" id="address" required>
+                    <label for="payment-method">Метод оплаты</label>
+                    <select id="payment-method">
+                        <option value="card">Карта</option>
+                        <option value="cash">Наличные</option>
+                    </select>
+                    <button type="submit">Оформить заказ</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2024 Кондитерская Ваниль. Все права защищены.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            loadOrderSummary();
+        });
+
+        function loadOrderSummary() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) {
+                alert('Пожалуйста, войдите в систему, чтобы оформить заказ.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            fetch(`http://localhost:3000/api/cart?user_id=${user.user_id}`)
+                .then(response => response.json())
+                .then(cartItems => {
+                    const productList = document.querySelector('.product-list');
+                    productList.innerHTML = '';
+                    let totalPrice = 0;
+
+                    cartItems.forEach(item => {
+                        totalPrice += item.price * item.quantity;
+
+                        const productDiv = document.createElement('div');
+                        productDiv.className = 'product-card';
+                        productDiv.innerHTML = `
+                            <h3>${item.name}</h3>
+                            <p>${item.price} тг</p>
+                            <p>Количество: ${item.quantity}</p>
+                        `;
+                        productList.appendChild(productDiv);
+                    });
+
+                    document.getElementById('total-price').textContent = `${totalPrice} тг`;
+                })
+                .catch(error => console.error('Ошибка при загрузке сводки заказа:', error));
+        }
+
+        document.getElementById('checkout-form').onsubmit = function (e) {
+            e.preventDefault();
+
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) {
+                alert('Пожалуйста, войдите в систему, чтобы оформить заказ.');
+                return;
+            }
+
+            const total = parseFloat(document.getElementById('total-price').textContent);
+            const name = document.getElementById('name').value;
+            const address = document.getElementById('address').value;
+            const paymentMethod = document.getElementById('payment-method').value;
+
+            fetch('http://localhost:3000/api/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_id: user.user_id, total: total, name: name, address: address, payment_method: paymentMethod })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Ваш заказ успешно оформлен!');
+                window.location.href = 'index.html';
+            })
+            .catch(error => console.error('Ошибка при оформлении заказа:', error));
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Товар | Кондитерская Ваниль</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <script src="js/header.js"></script>
+    </header>
+
+    <main>
+        <div class="product-details">
+            <img id="product-image" class="product-image" src="" alt="Фото товара">
+            <div class="product-info">
+                <h1 id="product-name"></h1>
+                <p id="product-description" class="product-description"></p>
+                <p id="product-price" class="product-price"></p>
+                <p id="product-quantity" class="product-quantity"></p>
+                <button id="add-to-cart" class="add-to-cart">Добавить в корзину</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2024 Кондитерская Ваниль. Все права защищены.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const productId = new URLSearchParams(window.location.search).get('id');
+            if (productId) {
+                fetch(`http://localhost:3000/api/products/${productId}`)
+                    .then(response => response.json())
+                    .then(product => {
+                        document.getElementById('product-image').src = `/${product.photo_url}`;
+                        document.getElementById('product-name').textContent = product.name;
+                        document.getElementById('product-description').textContent = product.description;
+                        document.getElementById('product-price').textContent = `${product.price} тг`;
+                        document.getElementById('product-quantity').textContent = `Количество: ${product.quantity}`;
+
+                        document.getElementById('add-to-cart').onclick = function() {
+                            addToCart(product.product_id);
+                        };
+                    })
+                    .catch(error => console.error('Ошибка при загрузке товара:', error));
+            }
+        });
+
+        function addToCart(productId) {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) {
+                alert('Пожалуйста, войдите в систему, чтобы добавить товар в корзину.');
+                return;
+            }
+
+            fetch('http://localhost:3000/api/cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_id: user.user_id, product_id: productId, quantity: 1 })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Товар добавлен в корзину.');
+            })
+            .catch(error => console.error('Ошибка при добавлении товара в корзину:', error));
+        }
+    </script>
+</body>
+</html>

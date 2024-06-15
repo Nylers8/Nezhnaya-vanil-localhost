@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация | Кондитерская Ваниль</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <script src="js/header.js"></script>
+    </header>
+
+    <main>
+        <a href="index.html" class="back-to-shop">← Вернуться в магазин</a>
+        <div class="registration-form">
+            <h1>Регистрация</h1>
+            <form action="http://localhost:3000/register" method="post">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" placeholder="abc@gmail.com" required>
+            
+                <label for="password">Пароль</label>
+                <input id="password" name="password" type="password" placeholder="****" required>
+            
+                <label for="first-name">Имя</label>
+                <input id="first-name" name="firstName" type="text" placeholder="Амигос" required>
+            
+                <label for="last-name">Фамилия</label>
+                <input id="last-name" name="lastName" type="text" placeholder="Джон" required>
+            
+                <label for="phone">Телефон</label>
+                <input id="phone" name="phone" type="tel" placeholder="+7 777 1112233" required>
+            
+                <label for="city">Город</label>
+                <input id="city" name="city" type="text" placeholder="Нью-Вегас" required>
+            
+                <label for="address">Адрес</label>
+                <input id="address" name="address" type="text" placeholder="Калинина 12" required>
+            
+                <label for="zipcode">Индекс</label>
+                <input id="zipcode" name="postalCode" type="text" placeholder="080000" required>
+            
+                <button type="submit">Регистрация</button>
+            </form>
+            
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2024 Кондитерская Ваниль. Все права защищены.</p>
+    </footer>
+</body>
+</html>

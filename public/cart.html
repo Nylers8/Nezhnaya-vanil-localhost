@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина | Кондитерская Ваниль</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <script src="js/header.js"></script>
+    </header>
+
+    <main>
+        <div class="cart-container">
+            <a href="index.html" class="back-to-shop">← Вернуться в магазин</a>
+            <h1>Ваш список товаров</h1>
+            <div class="product-list">
+                <!-- Продукты будут добавлены динамически -->
+            </div>
+            <div class="summary">
+                <h2>Сводка</h2>
+                <div class="item-total">
+                    <span>Товары в корзине</span>
+                    <span id="total-price">0 тг</span>
+                </div>
+                <button class="checkout-button" onclick="checkout()">Перейти к оформлению заказа</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2024 Кондитерская Ваниль. Все права защищены.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            loadCart();
+        });
+
+        function loadCart() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) {
+                alert('Пожалуйста, войдите в систему, чтобы просмотреть корзину.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            fetch(`http://localhost:3000/api/cart?user_id=${user.user_id}`)
+                .then(response => response.json())
+                .then(cartItems => {
+                    const productList = document.querySelector('.product-list');
+                    productList.innerHTML = '';
+                    let totalPrice = 0;
+
+                    cartItems.forEach(item => {
+                        totalPrice += item.price * item.quantity;
+
+                        const productDiv = document.createElement('div');
+                        productDiv.className = 'product-card';
+                        productDiv.innerHTML = `
+                            <img src="/${item.photo_url}" alt="${item.name}">
+                            <h3>${item.name}</h3>
+                            <p>${item.price} тг</p>
+                            <input type="number" value="${item.quantity}" min="1" onchange="updateQuantity(${item.cart_id}, this.value)">
+                            <button onclick="removeFromCart(${item.cart_id})">Удалить</button>
+                        `;
+                        productList.appendChild(productDiv);
+                    });
+
+                    document.getElementById('total-price').textContent = `${totalPrice} тг`;
+                })
+                .catch(error => console.error('Ошибка при загрузке корзины:', error));
+        }
+
+        function updateQuantity(cartId, quantity) {
+            fetch(`http://localhost:3000/api/cart/${cartId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ quantity: quantity })
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadCart();
+            })
+            .catch(error => console.error('Ошибка при обновлении количества:', error));
+        }
+
+        function removeFromCart(cartId) {
+            fetch(`http://localhost:3000/api/cart/${cartId}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadCart();
+            })
+            .catch(error => console.error('Ошибка при удалении товара из корзины:', error));
+        }
+
+        function checkout() {
+            window.location.href = 'checkout.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Администраторская панель | Кондитерская Ваниль</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <script src="js/header.js"></script>
+    </header>
+
+    <a href="index.html" class="back-to-shop">← Вернуться в магазин</a>
+
+    <section class="catalog-addition">
+        <h2>Добавление категории</h2>
+        <form id="add-category-form">
+            <input type="text" id="category-name" name="category-name" placeholder="Название категории..." required>
+            <button type="submit">Добавить</button>
+        </form>
+    </section>
+
+    <section class="product-addition">
+        <h2>Добавление товара</h2>
+        <form id="add-product-form" enctype="multipart/form-data">
+            <input type="text" id="product-name" name="name" placeholder="Название товара" required>
+            <input type="number" id="product-price" name="price" placeholder="Цена" required>
+            <textarea id="product-description" name="description" placeholder="Описание товара"></textarea>
+            <input type="number" id="product-quantity" name="quantity" placeholder="Количество" required>
+            <div id="category-select">
+                <input type="text" id="category-input" placeholder="Выбрать категории" readonly>
+                <ul id="category-list" class="category-dropdown"></ul>
+            </div>
+            <input type="file" id="product-photo" name="photo" accept="image/*">
+            <button type="submit">Отправить</button>
+        </form>
+    </section>
+    
+    <section class="management-section">
+        <h2>Управление товарами</h2>
+        <input type="text" id="search-products" placeholder="Поиск товаров...">
+        <div class="management-list" id="product-list"></div>
+    </section>
+
+    <section class="management-section">
+        <h2>Управление пользователями</h2>
+        <input type="text" id="search-users" placeholder="Поиск пользователей...">
+        <div class="management-list" id="user-list"></div>
+    </section>
+
+    <section class="management-section">
+        <h2>Управление категориями</h2>
+        <input type="text" id="search-categories" placeholder="Поиск категорий...">
+        <div class="management-list" id="category-management-list"></div>
+    </section>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>
